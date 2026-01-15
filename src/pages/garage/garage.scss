@@ -1,0 +1,21 @@
+.garage {
+  &__info {
+    display: flex;
+    gap: 5rem;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.car {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px dotted #fff;
+
+  &__figure {
+    width: 2rem;
+    height: 2rem;
+  }
+}

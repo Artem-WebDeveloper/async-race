@@ -12,6 +12,18 @@ export default abstract class Page {
     return title;
   }
 
+  protected showLoader(element: HTMLElement) {
+    element.replaceChildren();
+    const loader = dom.create({ tag: 'p', classNames: ['loader'], text: 'Loading...' });
+    element.append(loader);
+  }
+
+  protected showError(element: HTMLElement, ErrorMessage: string) {
+    element.replaceChildren();
+    const error = dom.create({ tag: 'p', classNames: ['loader'], text: ErrorMessage });
+    element.append(error);
+  }
+
   render() {
     return this.container;
   }

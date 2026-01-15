@@ -6,3 +6,11 @@ export const PageIDs = {
 export const ErrorTypes = {
   ERROR_404: '404',
 } as const;
+
+// API
+
+export type Car = {
+  name: string;
+  color: string;
+  id: number;
+};

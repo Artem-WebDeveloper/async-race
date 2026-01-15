@@ -2,7 +2,7 @@ import Page from '../../core/templates/page';
 
 export default class WinnersPage extends Page {
   static TextObject = {
-    MAIN_TITLE: 'Winners',
+    MAIN_TITLE: '🏁 Winners',
   };
 
   constructor(id: string) {
