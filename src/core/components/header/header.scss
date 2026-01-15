@@ -1,0 +1,31 @@
+.header {
+  max-width: 144rem;
+  padding: 3rem 2rem;
+  margin: 0 auto;
+}
+
+.nav {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 5rem;
+
+  &__link {
+    color: inherit;
+    font-weight: 500;
+    padding: 0.8rem 2rem;
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: scale(1.05);
+        background: #5a9de0;
+      }
+    }
+
+    &--active {
+      background-color: aquamarine;
+    }
+  }
+}
