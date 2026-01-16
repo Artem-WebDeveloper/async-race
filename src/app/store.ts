@@ -1,5 +1,5 @@
 import ApiRace from '../core/services/api.services';
-import type { Car } from '../types';
+import type { Car, CarSet } from '../types';
 
 type Listener = () => void;
 
@@ -32,6 +32,17 @@ class Store {
     }
 
     console.log(this.cars);
+  }
+
+  async addCar(dataUpload: CarSet) {
+    try {
+      await ApiRace.createCar(dataUpload);
+      await this.fetchCars();
+    } catch (error) {
+      this.error = '⚠️ Failed to add car!';
+      console.error(error);
+      this.notify();
+    }
   }
 
   public subscribe(listener: Listener) {

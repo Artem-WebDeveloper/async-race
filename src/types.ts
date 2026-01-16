@@ -14,3 +14,8 @@ export type Car = {
   color: string;
   id: number;
 };
+
+export type CarSet = {
+  name: string;
+  color: string;
+};

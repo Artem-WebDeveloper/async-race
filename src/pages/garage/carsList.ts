@@ -9,7 +9,7 @@ export default class CarsList {
   constructor() {
     this.container = dom.create({ tag: 'div', classNames: ['cars'] });
     this.carsList = dom.create({ tag: 'ul', classNames: ['cars__list'] });
-    this.carsInfo = dom.create({ tag: 'div', classNames: ['garage__info'] });
+    this.carsInfo = dom.create({ tag: 'div', classNames: ['cars__info'] });
   }
 
   render() {
@@ -31,10 +31,10 @@ export default class CarsList {
   }
 
   private createCar(name: string, color: string) {
-    const carElement = dom.create({ tag: 'div', classNames: ['car'] });
-    const carFigure = dom.create({ tag: 'div', classNames: ['car__figure'] });
+    const carElement = dom.create({ tag: 'li', classNames: ['cars__item'] });
+    const carFigure = dom.create({ tag: 'div', classNames: ['cars__figure'] });
     carFigure.style.backgroundColor = color;
-    const carName = dom.create({ tag: 'p', classNames: ['car__name'], text: name });
+    const carName = dom.create({ tag: 'p', classNames: ['cars__name'], text: name });
     carElement.append(carFigure, carName);
     return carElement;
   }

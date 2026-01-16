@@ -3,21 +3,30 @@ import store from '../../app/store';
 
 import './garage.scss';
 import CarsList from './carsList';
+import CarsControl from './carsControl';
+import type { CarSet } from '../../types';
 
 export default class GaragePage extends Page {
   static TextObject = {
     MAIN_TITLE: '⚙️ Garage',
   };
 
+  carsControl: CarsControl = new CarsControl();
   carsList: CarsList = new CarsList();
   carsContainer: HTMLDivElement;
+  controlContainer: HTMLDivElement;
   unsubscribe: () => void;
 
   constructor(id: string) {
     super(id);
     this.carsContainer = this.carsList.render();
+    this.controlContainer = this.carsControl.render();
 
     this.unsubscribe = store.subscribe(this.renderCars);
+
+    this.carsControl.addHandlerCreate((newCar: CarSet) => {
+      store.addCar(newCar);
+    });
   }
 
   renderCars = () => {
@@ -41,7 +50,7 @@ export default class GaragePage extends Page {
 
   public render() {
     const header = this.createHeaderTitle(GaragePage.TextObject.MAIN_TITLE);
-    this.container.append(header, this.carsContainer);
+    this.container.append(header, this.controlContainer, this.carsContainer);
 
     this.renderCars();
     return this.container;
