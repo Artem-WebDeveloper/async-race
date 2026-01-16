@@ -27,6 +27,22 @@ export default class GaragePage extends Page {
     this.carsControl.addHandlerCreate((newCar: CarSet) => {
       store.addCar(newCar);
     });
+
+    this.carsControl.addHandlerUpdate((newCar: CarSet) => {
+      store.updateCar(newCar);
+    });
+
+    this.carsList.addHandlerDeleteCar((id: number) => {
+      store.deleteCar(id);
+    });
+
+    this.carsList.addHandlerSelectCar((id: number) => {
+      const car = store.updateSelectedCar(id);
+      if (!car) return;
+
+      this.carsControl.activateUpdateForm(car);
+      console.log(car);
+    });
   }
 
   renderCars = () => {
@@ -45,7 +61,7 @@ export default class GaragePage extends Page {
       return;
     }
 
-    this.carsList.renderCarsList(store.cars);
+    this.carsList.renderCarsList(store.cars, store.getSelectedCar());
   };
 
   public render() {
@@ -53,6 +69,9 @@ export default class GaragePage extends Page {
     this.container.append(header, this.controlContainer, this.carsContainer);
 
     this.renderCars();
+
+    const selectedCar = store.getSelectedCar();
+    if (selectedCar) this.carsControl.activateUpdateForm(selectedCar);
     return this.container;
   }
 

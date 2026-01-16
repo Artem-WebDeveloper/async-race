@@ -1,5 +1,5 @@
 import dom from '../../core/templates/creator';
-import type { CarSet } from '../../types';
+import type { Car, CarSet } from '../../types';
 
 export default class CarsControl {
   container: HTMLDivElement;
@@ -18,10 +18,17 @@ export default class CarsControl {
     const colorInput = dom.create({ tag: 'input', classNames: ['form__color'] });
     const button = dom.create({ tag: 'button', classNames: ['form__btn'], text: type });
     nameInput.type = 'text';
-    nameInput.name = 'name';
+    nameInput.name = 'nameField';
     nameInput.placeholder = 'Name Car';
     colorInput.type = 'color';
     colorInput.name = 'color';
+    button.name = 'submitBtn';
+
+    if (type === 'update') {
+      nameInput.disabled = true;
+      colorInput.disabled = true;
+      button.disabled = true;
+    }
 
     form.append(nameInput, colorInput, button);
     return form;
@@ -34,12 +41,50 @@ export default class CarsControl {
       if (!(event.target instanceof HTMLFormElement)) return;
 
       const formData = new FormData(event.target);
-      const name = String(formData.get('name'));
+      const name = String(formData.get('nameField'));
       const color = String(formData.get('color'));
 
       const newCar = { name, color };
       handler(newCar);
+      this.createCarForm.nameField.value = '';
     });
+  }
+
+  addHandlerUpdate(handler: (newCar: CarSet) => void) {
+    this.updateCarForm.addEventListener('submit', (event: SubmitEvent) => {
+      event.preventDefault();
+
+      if (!(event.target instanceof HTMLFormElement)) return;
+
+      const formData = new FormData(event.target);
+      const name = String(formData.get('nameField'));
+      const color = String(formData.get('color'));
+
+      const newCar = { name, color };
+      handler(newCar);
+      this.updateCarForm.nameField.value = '';
+      this.deactivateUpdateForm();
+    });
+  }
+
+  activateUpdateForm(car: Car) {
+    const color = this.updateCarForm.color;
+    const name = this.updateCarForm.nameField;
+    const btn = this.updateCarForm.submitBtn;
+
+    name.value = car.name;
+    color.value = car.color;
+
+    name.focus();
+    [color, btn, name].forEach((elem) => (elem.disabled = false));
+  }
+
+  deactivateUpdateForm() {
+    const color = this.updateCarForm.color;
+    const name = this.updateCarForm.nameField;
+    const btn = this.updateCarForm.submitBtn;
+
+    [color, btn, name].forEach((elem) => (elem.disabled = true));
   }
 
   render() {

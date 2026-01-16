@@ -6,6 +6,7 @@ type Listener = () => void;
 class Store {
   private listeners: Listener[] = [];
   cars: Car[] = [];
+  selectedCar: null | Car = null;
 
   isLoading: boolean = false;
   error: string | null = null;
@@ -30,8 +31,6 @@ class Store {
       this.isLoading = false;
       this.notify();
     }
-
-    console.log(this.cars);
   }
 
   async addCar(dataUpload: CarSet) {
@@ -43,6 +42,42 @@ class Store {
       console.error(error);
       this.notify();
     }
+  }
+
+  async updateCar(dataUpload: CarSet) {
+    try {
+      if (!this.selectedCar) throw new Error('Car is not exist!');
+      await ApiRace.updateCar(dataUpload, this.selectedCar.id);
+      this.selectedCar = null;
+      await this.fetchCars();
+    } catch (error) {
+      this.error = '⚠️ Failed to update car!';
+      console.error(error);
+      this.notify();
+    }
+  }
+
+  async deleteCar(id: number) {
+    try {
+      await ApiRace.deleteCar(id);
+      await this.fetchCars();
+    } catch (error) {
+      this.error = '⚠️ Failed to delete car!';
+      console.error(error);
+      this.notify();
+    }
+  }
+
+  public updateSelectedCar(id: number) {
+    const car = this.cars.find((car) => car.id === id);
+    if (!car) return this.selectedCar;
+
+    this.selectedCar = car;
+    return car;
+  }
+
+  public getSelectedCar() {
+    return this.selectedCar;
   }
 
   public subscribe(listener: Listener) {
