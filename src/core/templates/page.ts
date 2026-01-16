@@ -27,4 +27,6 @@ export default abstract class Page {
   render() {
     return this.container;
   }
+
+  destroy() {}
 }

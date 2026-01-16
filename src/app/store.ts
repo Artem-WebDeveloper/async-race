@@ -36,6 +36,10 @@ class Store {
 
   public subscribe(listener: Listener) {
     this.listeners.push(listener);
+
+    return () => {
+      this.listeners = this.listeners.filter((observer) => observer !== listener);
+    };
   }
 
   private notify() {

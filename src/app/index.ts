@@ -14,6 +14,7 @@ type RouteConfig = {
 export default class App {
   mainContainer: HTMLElement;
   header: Header;
+  currentPage: Page | null = null;
 
   routes: RouteConfig[] = [
     { path: PageIDs.GARAGE_PAGE, component: GaragePage, title: 'async-race | Garage' },
@@ -26,10 +27,12 @@ export default class App {
   }
 
   renderPage(pageId: string) {
+    this.currentPage?.destroy();
     this.mainContainer.replaceChildren();
 
     const route = this.routes.find((route) => route.path === pageId);
     const page = route ? new route.component(pageId) : new ErrorPage(pageId, ErrorTypes.ERROR_404);
+    this.currentPage = page;
 
     if (route?.title) {
       document.title = route.title;
