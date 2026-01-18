@@ -2,8 +2,8 @@ import Page from '../../core/templates/page';
 import store from '../../app/store';
 
 import './garage.scss';
-import CarsList from './carsList';
-import CarsControl from './carsControl';
+import CarsList from './carsList/carsList';
+import CarsControl from './carsControl/carsControl';
 import type { CarSet } from '../../types';
 
 export default class GaragePage extends Page {

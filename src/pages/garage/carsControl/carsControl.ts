@@ -1,5 +1,7 @@
-import dom from '../../core/templates/creator';
-import type { Car, CarSet } from '../../types';
+import dom from '../../../core/templates/creator';
+import type { Car, CarSet } from '../../../types';
+
+import './carsControl.scss';
 
 export default class CarsControl {
   container: HTMLDivElement;

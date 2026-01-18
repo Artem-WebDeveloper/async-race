@@ -1,0 +1,44 @@
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form {
+  display: flex;
+  gap: 1rem;
+
+  &__name {
+    font-size: 1.6rem;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    border: none;
+
+    &:focus {
+      filter: drop-shadow(0 0 0.6em #3178c6aa);
+    }
+  }
+
+  &__color {
+    cursor: pointer;
+    border-radius: 2px;
+    border: none;
+  }
+
+  &__btn {
+    cursor: pointer;
+    width: 10rem;
+    text-transform: capitalize;
+    border: none;
+    font-size: 1.6rem;
+    font-family: inherit;
+    border-radius: 0.7rem;
+    transition: all 0.2s;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        filter: drop-shadow(0 0 1em #3178c6aa);
+      }
+    }
+  }
+}
