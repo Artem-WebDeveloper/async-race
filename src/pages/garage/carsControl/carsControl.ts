@@ -64,7 +64,7 @@ export default class CarsControl {
 
       const newCar = { name, color };
       handler(newCar);
-      this.updateCarForm.nameField.value = '';
+
       this.deactivateUpdateForm();
     });
   }
@@ -82,6 +82,7 @@ export default class CarsControl {
   }
 
   deactivateUpdateForm() {
+    this.updateCarForm.nameField.value = '';
     const color = this.updateCarForm.color;
     const name = this.updateCarForm.nameField;
     const btn = this.updateCarForm.submitBtn;

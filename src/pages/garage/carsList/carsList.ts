@@ -7,29 +7,62 @@ export default class CarsList {
   container: HTMLDivElement;
   carsList: HTMLUListElement;
   carsInfo: HTMLDivElement;
+  btnPrev: HTMLButtonElement;
+  btnNext: HTMLButtonElement;
 
   constructor() {
     this.container = dom.create({ tag: 'div', classNames: ['cars'] });
     this.carsList = dom.create({ tag: 'ul', classNames: ['cars__list'] });
     this.carsInfo = dom.create({ tag: 'div', classNames: ['cars__info'] });
+
+    this.btnPrev = dom.create({ tag: 'button', classNames: ['btn-pagination'], text: '← Prev' });
+    this.btnNext = dom.create({ tag: 'button', classNames: ['btn-pagination'], text: 'Next →' });
   }
 
   render() {
     return this.container;
   }
 
-  renderCarsList(cars: Car[], selectedCar: Car | null) {
-    this.clear();
-
-    const carsQuantity = dom.create({ tag: 'p', text: `Cars All: ${String(cars.length)}` });
-    const currentPage = dom.create({ tag: 'p', text: `Page #1` });
-    this.carsInfo.append(carsQuantity, currentPage);
+  public renderCarsList(cars: Car[], selectedCar: Car | null) {
+    this.carsList.replaceChildren();
 
     cars.forEach(({ name, color, id }) => {
       const carElement = this.createCar(name, color, id, selectedCar);
       this.carsList.append(carElement);
     });
-    this.container.append(this.carsInfo, this.carsList);
+
+    this.container.append(this.carsList);
+  }
+
+  public renderCarsInfo(currentPage: number, carsAll: number) {
+    this.carsInfo.replaceChildren();
+
+    const carsQuantity = dom.create({ tag: 'p', text: `Cars All: ${String(carsAll)}` });
+    const currentPageElement = dom.create({ tag: 'p', text: `Page #${String(currentPage)}` });
+    this.carsInfo.append(carsQuantity, currentPageElement);
+    this.container.append(this.carsInfo);
+  }
+
+  public renderBtnsPagination(totalPages: number, currentPage: number) {
+    const btnsContainer = dom.create({ tag: 'div', classNames: ['cars__pagination'] });
+
+    if (currentPage === 1 && totalPages > 1) {
+      btnsContainer.append(this.btnNext);
+      this.container.append(btnsContainer);
+      return;
+    }
+
+    if (currentPage === totalPages && totalPages > 1) {
+      btnsContainer.append(this.btnPrev);
+      this.container.append(btnsContainer);
+      return;
+    }
+
+    if (currentPage < totalPages) {
+      btnsContainer.append(this.btnPrev, this.btnNext);
+      this.container.append(btnsContainer);
+      return;
+    }
   }
 
   private createCar(name: string, color: string, id: number, selectedCar: Car | null) {
@@ -76,9 +109,10 @@ export default class CarsList {
     });
   }
 
-  private clear() {
-    this.container.replaceChildren();
-    this.carsList.replaceChildren();
-    this.carsInfo.replaceChildren();
+  addHandlerBtnNext(hander: () => void) {
+    this.btnNext.addEventListener('click', hander);
+  }
+  addHandlerBtnPrev(hander: () => void) {
+    this.btnPrev.addEventListener('click', hander);
   }
 }

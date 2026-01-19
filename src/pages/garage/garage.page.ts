@@ -34,6 +34,9 @@ export default class GaragePage extends Page {
 
     this.carsList.addHandlerDeleteCar((id: number) => {
       store.deleteCar(id);
+      if (id === store.selectedCar?.id) {
+        this.carsControl.deactivateUpdateForm();
+      }
     });
 
     this.carsList.addHandlerSelectCar((id: number) => {
@@ -41,7 +44,14 @@ export default class GaragePage extends Page {
       if (!car) return;
 
       this.carsControl.activateUpdateForm(car);
-      console.log(car);
+    });
+
+    this.carsList.addHandlerBtnNext(() => {
+      store.changeCurPage('next');
+    });
+
+    this.carsList.addHandlerBtnPrev(() => {
+      store.changeCurPage('prev');
     });
   }
 
@@ -61,7 +71,9 @@ export default class GaragePage extends Page {
       return;
     }
 
-    this.carsList.renderCarsList(store.cars, store.getSelectedCar());
+    this.carsList.renderCarsInfo(store.getCurPage(), store.getTotalCars());
+    this.carsList.renderCarsList(store.getVisibleCars(), store.getSelectedCar());
+    this.carsList.renderBtnsPagination(store.getTotalPages(), store.getCurPage());
   };
 
   public render() {

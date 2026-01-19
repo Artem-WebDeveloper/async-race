@@ -7,6 +7,8 @@ class Store {
   private listeners: Listener[] = [];
   cars: Car[] = [];
   selectedCar: null | Car = null;
+  currentPage: number = 1;
+  carsPerPage: number = 7;
 
   isLoading: boolean = false;
   error: string | null = null;
@@ -60,7 +62,14 @@ class Store {
   async deleteCar(id: number) {
     try {
       await ApiRace.deleteCar(id);
+
+      if (this.selectedCar?.id === id) {
+        this.selectedCar = null;
+      }
+
       await this.fetchCars();
+      this.normalizeCurrentPage();
+      this.notify();
     } catch (error) {
       this.error = '⚠️ Failed to delete car!';
       console.error(error);
@@ -76,8 +85,39 @@ class Store {
     return car;
   }
 
+  public getVisibleCars() {
+    const start = (this.currentPage - 1) * this.carsPerPage;
+    const end = this.currentPage * this.carsPerPage;
+
+    return this.cars.slice(start, end);
+  }
+
+  public changeCurPage(page: 'next' | 'prev') {
+    if (page === 'next') this.currentPage++;
+    else this.currentPage--;
+
+    this.notify();
+  }
+
+  private normalizeCurrentPage() {
+    const maxPage = Math.max(1, Math.ceil(this.cars.length / this.carsPerPage));
+    if (this.currentPage > maxPage) this.currentPage = maxPage;
+  }
+
   public getSelectedCar() {
     return this.selectedCar;
+  }
+
+  public getTotalCars() {
+    return this.cars.length;
+  }
+
+  getTotalPages() {
+    return Math.ceil(this.cars.length / this.carsPerPage);
+  }
+
+  public getCurPage() {
+    return this.currentPage;
   }
 
   public subscribe(listener: Listener) {
