@@ -34,12 +34,19 @@ export default class CarsList {
     this.container.append(this.carsList);
   }
 
-  public renderCarsInfo(currentPage: number, carsAll: number) {
+  public renderCarsInfo(currentPage: number, totalPages: number, carsAll: number) {
     this.carsInfo.replaceChildren();
 
     const carsQuantity = dom.create({ tag: 'p', text: `Cars All: ${String(carsAll)}` });
     const currentPageElement = dom.create({ tag: 'p', text: `Page #${String(currentPage)}` });
-    this.carsInfo.append(carsQuantity, currentPageElement);
+
+    this.btnPrev.disabled = currentPage <= 1;
+    this.btnNext.disabled = currentPage >= totalPages;
+
+    const btnsContainer = dom.create({ tag: 'div', classNames: ['cars__pagination'] });
+    btnsContainer.append(this.btnPrev, currentPageElement, this.btnNext);
+
+    this.carsInfo.append(carsQuantity, btnsContainer);
     this.container.append(this.carsInfo);
   }
 
@@ -67,8 +74,10 @@ export default class CarsList {
 
   private createCar(name: string, color: string, id: number, selectedCar: Car | null) {
     const carElement = dom.create({ tag: 'li', classNames: ['cars__item'] });
+    const carTop = dom.create({ tag: 'div', classNames: ['cars__item--top'] });
     const carFigure = dom.create({ tag: 'div', classNames: ['cars__figure'] });
     carFigure.style.backgroundColor = color;
+
     const carName = dom.create({ tag: 'p', classNames: ['cars__name'], text: name });
     const [btnDelete, btnUpdate] = ['delete', 'select'].map((buttonType) => {
       const btn = dom.create({ tag: 'button', classNames: [`cars__btn-${buttonType}`] });
@@ -81,7 +90,8 @@ export default class CarsList {
       return btn;
     });
 
-    carElement.append(carFigure, carName, btnDelete, btnUpdate);
+    carTop.append(btnUpdate, btnDelete, carName);
+    carElement.append(carTop, carFigure);
     return carElement;
   }
 

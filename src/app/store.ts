@@ -1,14 +1,17 @@
 import ApiRace from '../core/services/api.services';
+import { getRandomCars } from '../core/services/randomCar';
 import type { Car, CarSet } from '../types';
 
 type Listener = () => void;
 
 class Store {
+  CARS_PER_PAGE: number = 7;
+  COUNT_GENERATED_CARS: number = 100;
+
   private listeners: Listener[] = [];
   cars: Car[] = [];
   selectedCar: null | Car = null;
   currentPage: number = 1;
-  carsPerPage: number = 7;
 
   isLoading: boolean = false;
   error: string | null = null;
@@ -42,6 +45,26 @@ class Store {
     } catch (error) {
       this.error = '⚠️ Failed to add car!';
       console.error(error);
+      this.notify();
+    }
+  }
+
+  async generateRandomCars() {
+    try {
+      this.isLoading = true;
+      this.notify();
+
+      const newCars = getRandomCars(this.COUNT_GENERATED_CARS);
+      const uploadingNewCars = newCars.map((car) => ApiRace.createCar(car));
+
+      await Promise.all(uploadingNewCars);
+      await this.fetchCars();
+    } catch (error) {
+      this.error = `⚠️ Failed to generate ${this.COUNT_GENERATED_CARS} cars!`;
+      this.notify();
+      console.error(error);
+    } finally {
+      this.isLoading = false;
       this.notify();
     }
   }
@@ -86,21 +109,28 @@ class Store {
   }
 
   public getVisibleCars() {
-    const start = (this.currentPage - 1) * this.carsPerPage;
-    const end = this.currentPage * this.carsPerPage;
+    const start = (this.currentPage - 1) * this.CARS_PER_PAGE;
+    const end = this.currentPage * this.CARS_PER_PAGE;
 
     return this.cars.slice(start, end);
   }
 
   public changeCurPage(page: 'next' | 'prev') {
-    if (page === 'next') this.currentPage++;
-    else this.currentPage--;
+    const totalPages = this.getTotalPages();
+
+    if (page === 'next' && this.currentPage < totalPages) {
+      this.currentPage++;
+    }
+
+    if (page === 'prev' && this.currentPage > 1) {
+      this.currentPage--;
+    }
 
     this.notify();
   }
 
   private normalizeCurrentPage() {
-    const maxPage = Math.max(1, Math.ceil(this.cars.length / this.carsPerPage));
+    const maxPage = Math.max(1, Math.ceil(this.cars.length / this.CARS_PER_PAGE));
     if (this.currentPage > maxPage) this.currentPage = maxPage;
   }
 
@@ -113,7 +143,7 @@ class Store {
   }
 
   getTotalPages() {
-    return Math.ceil(this.cars.length / this.carsPerPage);
+    return Math.ceil(this.cars.length / this.CARS_PER_PAGE);
   }
 
   public getCurPage() {

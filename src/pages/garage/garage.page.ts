@@ -32,6 +32,10 @@ export default class GaragePage extends Page {
       store.updateCar(newCar);
     });
 
+    this.carsControl.addHandlerGenerateCars(() => {
+      store.generateRandomCars();
+    });
+
     this.carsList.addHandlerDeleteCar((id: number) => {
       store.deleteCar(id);
       if (id === store.selectedCar?.id) {
@@ -71,9 +75,9 @@ export default class GaragePage extends Page {
       return;
     }
 
-    this.carsList.renderCarsInfo(store.getCurPage(), store.getTotalCars());
+    this.carsList.renderCarsInfo(store.getCurPage(), store.getTotalPages(), store.getTotalCars());
     this.carsList.renderCarsList(store.getVisibleCars(), store.getSelectedCar());
-    this.carsList.renderBtnsPagination(store.getTotalPages(), store.getCurPage());
+    // this.carsList.renderBtnsPagination(store.getTotalPages(), store.getCurPage());
   };
 
   public render() {

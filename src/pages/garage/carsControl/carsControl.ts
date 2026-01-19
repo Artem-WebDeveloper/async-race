@@ -7,11 +7,17 @@ export default class CarsControl {
   container: HTMLDivElement;
   createCarForm: HTMLFormElement;
   updateCarForm: HTMLFormElement;
+  btnGenerateCars: HTMLButtonElement;
 
   constructor() {
     this.container = dom.create({ tag: 'div', classNames: ['controls'] });
     this.createCarForm = this.createForm('create');
     this.updateCarForm = this.createForm('update');
+    this.btnGenerateCars = dom.create({
+      tag: 'button',
+      classNames: ['controls__btn'],
+      text: 'Generate 100 Random Cars',
+    });
   }
 
   createForm(type: 'create' | 'update') {
@@ -69,6 +75,10 @@ export default class CarsControl {
     });
   }
 
+  addHandlerGenerateCars(handler: () => void) {
+    this.btnGenerateCars.addEventListener('click', handler);
+  }
+
   activateUpdateForm(car: Car) {
     const color = this.updateCarForm.color;
     const name = this.updateCarForm.nameField;
@@ -91,7 +101,7 @@ export default class CarsControl {
   }
 
   render() {
-    this.container.append(this.createCarForm, this.updateCarForm);
+    this.container.append(this.createCarForm, this.updateCarForm, this.btnGenerateCars);
     return this.container;
   }
 }
