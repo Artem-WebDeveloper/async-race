@@ -7,10 +7,12 @@ type Listener = () => void;
 class Store {
   CARS_PER_PAGE: number = 7;
   COUNT_GENERATED_CARS: number = 100;
+  DEFAULT_CAR_VALUES: CarSet = { name: '', color: '#000000' };
 
   private listeners: Listener[] = [];
   cars: Car[] = [];
   selectedCar: null | Car = null;
+  carFormDraft: CarSet = this.DEFAULT_CAR_VALUES;
   currentPage: number = 1;
 
   isLoading: boolean = false;

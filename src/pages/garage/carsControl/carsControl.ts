@@ -38,6 +38,8 @@ export default class CarsControl {
       button.disabled = true;
     }
 
+    // this.setActualCreateFormValues()
+
     form.append(nameInput, colorInput, button);
     return form;
   }
@@ -55,6 +57,16 @@ export default class CarsControl {
       const newCar = { name, color };
       handler(newCar);
       this.createCarForm.nameField.value = '';
+      this.createCarForm.color.value = '#000000';
+    });
+  }
+
+  addHandlerCreateInput(handler: (data: CarSet) => void) {
+    this.createCarForm.addEventListener('input', () => {
+      handler({
+        name: this.createCarForm.nameField.value,
+        color: this.createCarForm.color.value,
+      });
     });
   }
 
@@ -77,6 +89,14 @@ export default class CarsControl {
 
   addHandlerGenerateCars(handler: () => void) {
     this.btnGenerateCars.addEventListener('click', handler);
+  }
+
+  setActualCreateFormValues(car: CarSet) {
+    const color = this.createCarForm.color;
+    const name = this.createCarForm.nameField;
+
+    name.value = car.name;
+    color.value = car.color;
   }
 
   activateUpdateForm(car: Car) {
