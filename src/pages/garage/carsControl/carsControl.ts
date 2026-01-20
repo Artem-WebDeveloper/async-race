@@ -38,8 +38,6 @@ export default class CarsControl {
       button.disabled = true;
     }
 
-    // this.setActualCreateFormValues()
-
     form.append(nameInput, colorInput, button);
     return form;
   }

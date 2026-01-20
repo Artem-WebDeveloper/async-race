@@ -30,6 +30,18 @@
       align-items: center;
       height: 2.9rem;
     }
+
+    &--bottom {
+      position: relative;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+  }
+
+  &__drive-contol {
+    display: flex;
+    gap: 0.8rem;
   }
 
   &__name {
@@ -38,7 +50,46 @@
   }
 
   &__figure {
-    width: 7rem;
-    height: 3rem;
+    width: 10rem;
+    height: 3.2rem;
+
+    & svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__flag {
+    position: absolute;
+    right: 12rem;
+    top: -1.5rem;
+    width: 6rem;
+    height: 5rem;
+
+    & svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__btn {
+    cursor: pointer;
+    &--go,
+    &--stop {
+      font-size: 1.8rem;
+      padding: 0.2rem;
+      background-color: transparent;
+      border: none;
+    }
+
+    &--go {
+      color: rgb(36, 113, 17);
+      box-shadow: 0 0 4px rgb(36, 113, 17);
+    }
+
+    &--stop {
+      color: rgb(165, 10, 10);
+      box-shadow: 0 0 4px rgb(165, 10, 10);
+    }
   }
 }

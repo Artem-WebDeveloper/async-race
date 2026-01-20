@@ -24,6 +24,44 @@ export default class GaragePage extends Page {
 
     this.unsubscribe = store.subscribe(this.renderCars);
 
+    this.initHandlers();
+  }
+
+  renderCars = () => {
+    this.carsContainer.replaceChildren();
+
+    if (store.isLoading) {
+      this.showLoader(this.carsContainer);
+      return;
+    }
+    if (store.error) {
+      this.showError(this.carsContainer, store.error);
+      return;
+    }
+    if (store.cars.length === 0) {
+      this.carsContainer.append('There are no Cars yet!');
+      return;
+    }
+
+    this.carsList.renderCarsInfo(store.getCurPage(), store.getTotalPages(), store.getTotalCars());
+    this.carsList.renderCarsList(store.getVisibleCars(), store.getSelectedCar());
+  };
+
+  public render() {
+    const header = this.createHeaderTitle(GaragePage.TextObject.MAIN_TITLE);
+    this.container.append(header, this.controlContainer, this.carsContainer);
+
+    this.renderCars();
+
+    const selectedCar = store.getSelectedCar();
+    if (selectedCar) this.carsControl.activateUpdateForm(selectedCar);
+
+    this.carsControl.setActualCreateFormValues(store.carFormDraft);
+
+    return this.container;
+  }
+
+  initHandlers() {
     this.carsControl.addHandlerCreateInput((draft: CarSet) => {
       store.carFormDraft = draft;
     });
@@ -62,40 +100,10 @@ export default class GaragePage extends Page {
     this.carsList.addHandlerBtnPrev(() => {
       store.changeCurPage('prev');
     });
-  }
 
-  renderCars = () => {
-    this.carsContainer.replaceChildren();
-
-    if (store.isLoading) {
-      this.showLoader(this.carsContainer);
-      return;
-    }
-    if (store.error) {
-      this.showError(this.carsContainer, store.error);
-      return;
-    }
-    if (store.cars.length === 0) {
-      this.carsContainer.append('There are no Cars yet!');
-      return;
-    }
-
-    this.carsList.renderCarsInfo(store.getCurPage(), store.getTotalPages(), store.getTotalCars());
-    this.carsList.renderCarsList(store.getVisibleCars(), store.getSelectedCar());
-  };
-
-  public render() {
-    const header = this.createHeaderTitle(GaragePage.TextObject.MAIN_TITLE);
-    this.container.append(header, this.controlContainer, this.carsContainer);
-
-    this.renderCars();
-
-    const selectedCar = store.getSelectedCar();
-    if (selectedCar) this.carsControl.activateUpdateForm(selectedCar);
-
-    this.carsControl.setActualCreateFormValues(store.carFormDraft);
-
-    return this.container;
+    this.carsList.addHandlerRunCar((id: number) => {
+      store.startEngine(id);
+    });
   }
 
   destroy() {

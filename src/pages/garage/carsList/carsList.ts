@@ -75,31 +75,70 @@ export default class CarsList {
   private createCar(name: string, color: string, id: number, selectedCar: Car | null) {
     const carElement = dom.create({ tag: 'li', classNames: ['cars__item'] });
     const carTop = dom.create({ tag: 'div', classNames: ['cars__item--top'] });
-    const carFigure = dom.create({ tag: 'div', classNames: ['cars__figure'] });
-    carFigure.style.backgroundColor = color;
+    const carBottom = dom.create({ tag: 'div', classNames: ['cars__item--bottom'] });
+    const carDriveControl = dom.create({ tag: 'div', classNames: ['cars__drive-contol'] });
 
+    const carModel = this.createCarModel(color);
+    const flagModel = this.createFlag();
     const carName = dom.create({ tag: 'p', classNames: ['cars__name'], text: name });
-    const [btnDelete, btnUpdate] = ['delete', 'select'].map((buttonType) => {
-      const btn = dom.create({ tag: 'button', classNames: [`cars__btn-${buttonType}`] });
-      btn.textContent = buttonType;
-      btn.dataset.carId = String(id);
 
-      if (buttonType === 'select') {
-        btn.disabled = selectedCar?.id === id;
-      }
-      return btn;
-    });
+    const [btnDelete, btnUpdate, btnGo, btnStop] = ['delete', 'select', 'go', 'stop'].map(
+      (buttonType) => {
+        const btn = dom.create({
+          tag: 'button',
+          classNames: ['cars__btn', `cars__btn--${buttonType}`],
+        });
+        btn.textContent = buttonType;
+        btn.dataset.carId = String(id);
 
+        if (buttonType === 'select') {
+          btn.disabled = selectedCar?.id === id;
+        }
+        return btn;
+      },
+    );
+
+    btnGo.textContent = 'A';
+    btnStop.textContent = 'B';
+    carDriveControl.append(btnGo, btnStop);
     carTop.append(btnUpdate, btnDelete, carName);
-    carElement.append(carTop, carFigure);
+    carBottom.append(carDriveControl, carModel, flagModel);
+
+    carElement.append(carTop, carBottom);
     return carElement;
+  }
+
+  private createCarModel(color: string) {
+    const carModel = dom.create({ tag: 'div', classNames: ['cars__figure'] });
+    const svgCar = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svgCar.style.color = color;
+    svgCar.innerHTML = `<use href="#car"></use>`;
+    carModel.append(svgCar);
+    return carModel;
+  }
+
+  private createFlag() {
+    const flagModel = dom.create({ tag: 'div', classNames: ['cars__flag'] });
+    const svgFlag = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svgFlag.innerHTML = `<use href="#flag"></use>`;
+    flagModel.append(svgFlag);
+    return flagModel;
+  }
+
+  addHandlerRunCar(handler: (id: number) => void) {
+    this.carsList.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement)) return;
+      if (!target.closest('.cars__btn--go')) return;
+      handler(Number(target.dataset.carId));
+    });
   }
 
   addHandlerDeleteCar(handler: (id: number) => void) {
     this.carsList.addEventListener('click', (event) => {
       const target = event.target;
       if (!(target instanceof HTMLButtonElement)) return;
-      if (!target.closest('.cars__btn-delete')) return;
+      if (!target.closest('.cars__btn--delete')) return;
       handler(Number(target.dataset.carId));
     });
   }
@@ -108,8 +147,8 @@ export default class CarsList {
     this.carsList.addEventListener('click', (event) => {
       const target = event.target;
       if (!(target instanceof HTMLButtonElement)) return;
-      if (!target.closest('.cars__btn-select')) return;
-      const selectBtns = this.carsList.querySelectorAll('.cars__btn-select');
+      if (!target.closest('.cars__btn--select')) return;
+      const selectBtns = this.carsList.querySelectorAll('.cars__btn--select');
       Array.from(selectBtns).forEach((button) => {
         if (button instanceof HTMLButtonElement) button.disabled = false;
       });

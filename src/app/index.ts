@@ -1,4 +1,5 @@
 import Header from '../core/components/header/header';
+import { initSvgSprite } from '../core/services/svgSprite';
 import Page from '../core/templates/page';
 import ErrorPage from '../pages/error/error.page';
 import GaragePage from '../pages/garage/garage.page';
@@ -54,6 +55,8 @@ export default class App {
 
   public run() {
     document.body.append(this.header.render(), this.mainContainer);
+    initSvgSprite();
+
     this.enableRouteChange();
   }
 }

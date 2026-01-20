@@ -68,4 +68,21 @@ export default class ApiRace {
       throw error;
     }
   }
+
+  static async engineControl(id: number, status: 'started' | 'stopped') {
+    try {
+      if (!BASE_URL) throw new Error('ENV: VITE_API_URL is not defined');
+
+      const response = await fetch(`${BASE_URL}/engine?id=${id}&status=${status}`, {
+        method: 'PATCH',
+      });
+
+      if (!response.ok) throw new Error(`Error Status: ${response.status.toString()}`);
+
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }

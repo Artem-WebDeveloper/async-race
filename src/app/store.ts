@@ -102,6 +102,16 @@ class Store {
     }
   }
 
+  async startEngine(id: number) {
+    try {
+      const data = await ApiRace.engineControl(id, 'started');
+      console.log(data);
+    } catch (error) {
+      this.error = '⚠️ Failed to start engine of car!';
+      console.error(error);
+    }
+  }
+
   public updateSelectedCar(id: number) {
     const car = this.cars.find((car) => car.id === id);
     if (!car) return this.selectedCar;
