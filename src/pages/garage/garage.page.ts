@@ -104,6 +104,10 @@ export default class GaragePage extends Page {
     this.carsList.addHandlerRunCar((id: number, maxDistance: number, carElement: Element) => {
       store.runCar(id, maxDistance, carElement);
     });
+
+    this.carsList.addHandlerStopCar((id: number) => {
+      store.stopCar(id);
+    });
   }
 
   destroy() {

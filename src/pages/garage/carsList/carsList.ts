@@ -145,6 +145,20 @@ export default class CarsList {
     });
   }
 
+  addHandlerStopCar(handler: (id: number) => void) {
+    this.carsList.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement)) return;
+      if (!target.closest('.cars__btn--stop')) return;
+      const car = document.querySelector(`[data-car-model-id="${target.dataset.carId}"]`);
+      if (!(car instanceof HTMLElement)) return;
+
+      car.style.transform = `translateX(0)`;
+      car.style.transition = '';
+      handler(Number(target.dataset.carId));
+    });
+  }
+
   addHandlerDeleteCar(handler: (id: number) => void) {
     this.carsList.addEventListener('click', (event) => {
       const target = event.target;

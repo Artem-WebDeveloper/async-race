@@ -103,7 +103,10 @@ class Store {
   }
 
   async runCar(id: number, maxTranslateX: number, carElement: Element) {
-    const CAR_START_POS = 60;
+    const CAR_START_POS = parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue('--start-car-position-px').trim(),
+    );
+
     try {
       const data: carPower = await ApiRace.engineControl(id, 'started');
       const { velocity, distance } = data;
@@ -129,7 +132,9 @@ class Store {
     }
   }
 
-  stopCar() {}
+  async stopCar(id: number) {
+    await ApiRace.engineControl(id, 'stopped');
+  }
 
   public updateSelectedCar(id: number) {
     const car = this.cars.find((car) => car.id === id);
