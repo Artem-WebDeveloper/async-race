@@ -1,6 +1,6 @@
 import ApiRace from '../core/services/api.services';
 import { getRandomCars } from '../core/services/randomCar';
-import type { Car, CarSet } from '../types';
+import type { Car, carPower, CarSet } from '../types';
 
 type Listener = () => void;
 
@@ -102,15 +102,34 @@ class Store {
     }
   }
 
-  async startEngine(id: number) {
+  async runCar(id: number, maxTranslateX: number, carElement: Element) {
+    const CAR_START_POS = 60;
     try {
-      const data = await ApiRace.engineControl(id, 'started');
-      console.log(data);
+      const data: carPower = await ApiRace.engineControl(id, 'started');
+      const { velocity, distance } = data;
+      const timeSec = distance / velocity / 1000;
+
+      if (!(carElement instanceof HTMLElement)) throw new Error('Car Element is not Found!');
+
+      carElement.style.transition = `transform ${timeSec}s linear`;
+      carElement.style.transform = `translateX(${maxTranslateX - CAR_START_POS}px)`;
+
+      try {
+        await ApiRace.switchDrive(id);
+      } catch (error) {
+        if (!(error instanceof Error)) throw error;
+        if (error.message === '500') {
+          const fixTransform = getComputedStyle(carElement).transform;
+          carElement.style.transition = '';
+          carElement.style.transform = fixTransform;
+        }
+      }
     } catch (error) {
-      this.error = '⚠️ Failed to start engine of car!';
       console.error(error);
     }
   }
+
+  stopCar() {}
 
   public updateSelectedCar(id: number) {
     const car = this.cars.find((car) => car.id === id);

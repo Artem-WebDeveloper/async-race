@@ -101,8 +101,8 @@ export default class GaragePage extends Page {
       store.changeCurPage('prev');
     });
 
-    this.carsList.addHandlerRunCar((id: number) => {
-      store.startEngine(id);
+    this.carsList.addHandlerRunCar((id: number, maxDistance: number, carElement: Element) => {
+      store.runCar(id, maxDistance, carElement);
     });
   }
 

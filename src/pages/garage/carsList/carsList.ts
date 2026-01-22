@@ -78,7 +78,7 @@ export default class CarsList {
     const carBottom = dom.create({ tag: 'div', classNames: ['cars__item--bottom'] });
     const carDriveControl = dom.create({ tag: 'div', classNames: ['cars__drive-contol'] });
 
-    const carModel = this.createCarModel(color);
+    const carModel = this.createCarModel(color, id);
     const flagModel = this.createFlag();
     const carName = dom.create({ tag: 'p', classNames: ['cars__name'], text: name });
 
@@ -108,8 +108,9 @@ export default class CarsList {
     return carElement;
   }
 
-  private createCarModel(color: string) {
+  private createCarModel(color: string, id: number) {
     const carModel = dom.create({ tag: 'div', classNames: ['cars__figure'] });
+    carModel.dataset.carModelId = String(id);
     const svgCar = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svgCar.style.color = color;
     svgCar.innerHTML = `<use href="#car"></use>`;
@@ -125,12 +126,22 @@ export default class CarsList {
     return flagModel;
   }
 
-  addHandlerRunCar(handler: (id: number) => void) {
+  addHandlerRunCar(handler: (id: number, maxDistance: number, car: Element) => void) {
     this.carsList.addEventListener('click', (event) => {
       const target = event.target;
       if (!(target instanceof HTMLButtonElement)) return;
       if (!target.closest('.cars__btn--go')) return;
-      handler(Number(target.dataset.carId));
+
+      const car = document.querySelector(`[data-car-model-id="${target.dataset.carId}"]`);
+      const track = car?.closest('.cars__item')?.querySelector('.cars__item--bottom');
+      let maxTranslateX = 0;
+      if (!car || !track) return;
+
+      if (car instanceof HTMLElement && track instanceof HTMLElement) {
+        maxTranslateX = track.offsetWidth - car.offsetWidth;
+      }
+
+      handler(Number(target.dataset.carId), maxTranslateX, car);
     });
   }
 

@@ -36,6 +36,7 @@
       display: flex;
       gap: 2rem;
       align-items: center;
+      height: 3.2rem;
     }
   }
 
@@ -52,6 +53,11 @@
   &__figure {
     width: 10rem;
     height: 3.2rem;
+    position: absolute;
+    top: 0;
+    left: var(--start-car-position);
+    // transform: translateX(39rem);
+    // right: 0;
 
     & svg {
       width: 100%;
@@ -61,7 +67,7 @@
 
   &__flag {
     position: absolute;
-    right: 12rem;
+    right: 11rem;
     top: -1.5rem;
     width: 6rem;
     height: 5rem;

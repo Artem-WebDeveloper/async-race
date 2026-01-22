@@ -19,3 +19,5 @@ export type CarSet = {
   name: string;
   color: string;
 };
+
+export type carPower = { velocity: number; distance: number };
