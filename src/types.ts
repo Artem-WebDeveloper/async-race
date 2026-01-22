@@ -5,6 +5,7 @@ export const PageIDs = {
 
 export const ErrorTypes = {
   ERROR_404: '404',
+  ERROR_500: '500',
 } as const;
 
 // API

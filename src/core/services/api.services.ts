@@ -87,19 +87,14 @@ export default class ApiRace {
   }
 
   static async switchDrive(id: number) {
-    try {
-      if (!BASE_URL) throw new Error('ENV: VITE_API_URL is not defined');
+    if (!BASE_URL) throw new Error('ENV: VITE_API_URL is not defined');
 
-      const response = await fetch(`${BASE_URL}/engine?id=${id}&status=drive`, {
-        method: 'PATCH',
-      });
+    const response = await fetch(`${BASE_URL}/engine?id=${id}&status=drive`, {
+      method: 'PATCH',
+    });
 
-      if (response.status === 500) throw new Error('500');
-      else if (!response.ok) throw new Error(response.status.toString());
-      return await response.json();
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+    if (response.status === 500) throw new Error('500');
+    else if (!response.ok) throw new Error(response.status.toString());
+    return await response.json();
   }
 }

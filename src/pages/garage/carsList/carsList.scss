@@ -56,8 +56,6 @@
     position: absolute;
     top: 0;
     left: var(--start-car-position-px);
-    // transform: translateX(39rem);
-    // right: 0;
 
     & svg {
       width: 100%;
@@ -86,6 +84,10 @@
       padding: 0.2rem;
       background-color: transparent;
       border: none;
+
+      &:disabled {
+        opacity: 0.5;
+      }
     }
 
     &--go {

@@ -100,6 +100,7 @@ export default class CarsList {
 
     btnGo.textContent = 'A';
     btnStop.textContent = 'B';
+    btnStop.disabled = true;
     carDriveControl.append(btnGo, btnStop);
     carTop.append(btnUpdate, btnDelete, carName);
     carBottom.append(carDriveControl, carModel, flagModel);
@@ -126,7 +127,14 @@ export default class CarsList {
     return flagModel;
   }
 
-  addHandlerRunCar(handler: (id: number, maxDistance: number, car: Element) => void) {
+  addHandlerRunCar(
+    handler: (
+      id: number,
+      maxDistance: number,
+      car: Element,
+      controlDriveBtns: (id: number, status: 'drive' | 'stop' | 'lag') => void,
+    ) => void,
+  ) {
     this.carsList.addEventListener('click', (event) => {
       const target = event.target;
       if (!(target instanceof HTMLButtonElement)) return;
@@ -141,11 +149,16 @@ export default class CarsList {
         maxTranslateX = track.offsetWidth - car.offsetWidth;
       }
 
-      handler(Number(target.dataset.carId), maxTranslateX, car);
+      handler(Number(target.dataset.carId), maxTranslateX, car, this.setDisabledRunBtns);
     });
   }
 
-  addHandlerStopCar(handler: (id: number) => void) {
+  addHandlerStopCar(
+    handler: (
+      id: number,
+      controlDriveBtns: (id: number, status: 'drive' | 'stop' | 'lag') => void,
+    ) => void,
+  ) {
     this.carsList.addEventListener('click', (event) => {
       const target = event.target;
       if (!(target instanceof HTMLButtonElement)) return;
@@ -155,9 +168,26 @@ export default class CarsList {
 
       car.style.transform = `translateX(0)`;
       car.style.transition = '';
-      handler(Number(target.dataset.carId));
+
+      handler(Number(target.dataset.carId), this.setDisabledRunBtns);
     });
   }
+
+  setDisabledRunBtns = (carId: number, status: 'drive' | 'stop' | 'lag') => {
+    const btnGo = this.carsList.querySelector<HTMLButtonElement>(
+      `.cars__btn--go[data-car-id="${carId}"]`,
+    );
+    const btnStop = this.carsList.querySelector<HTMLButtonElement>(
+      `.cars__btn--stop[data-car-id="${carId}"]`,
+    );
+    console.log(btnGo, btnStop);
+    if (!btnGo || !btnStop) return;
+
+    const isDrive = status === 'drive';
+    const isLag = status === 'lag';
+    btnGo.disabled = isLag ? true : isDrive;
+    btnStop.disabled = isLag ? true : !isDrive;
+  };
 
   addHandlerDeleteCar(handler: (id: number) => void) {
     this.carsList.addEventListener('click', (event) => {

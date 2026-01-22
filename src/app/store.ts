@@ -1,6 +1,6 @@
 import ApiRace from '../core/services/api.services';
 import { getRandomCars } from '../core/services/randomCar';
-import type { Car, carPower, CarSet } from '../types';
+import { ErrorTypes, type Car, type carPower, type CarSet } from '../types';
 
 type Listener = () => void;
 
@@ -102,13 +102,20 @@ class Store {
     }
   }
 
-  async runCar(id: number, maxTranslateX: number, carElement: Element) {
+  async runCar(
+    id: number,
+    maxTranslateX: number,
+    carElement: Element,
+    controlDriveBtns: (id: number, status: 'drive' | 'stop' | 'lag') => void,
+  ) {
     const CAR_START_POS = parseFloat(
       getComputedStyle(document.documentElement).getPropertyValue('--start-car-position-px').trim(),
     );
 
     try {
+      controlDriveBtns(id, 'lag');
       const data: carPower = await ApiRace.engineControl(id, 'started');
+      controlDriveBtns(id, 'drive');
       const { velocity, distance } = data;
       const timeSec = distance / velocity / 1000;
 
@@ -121,7 +128,7 @@ class Store {
         await ApiRace.switchDrive(id);
       } catch (error) {
         if (!(error instanceof Error)) throw error;
-        if (error.message === '500') {
+        if (error.message === ErrorTypes.ERROR_500) {
           const fixTransform = getComputedStyle(carElement).transform;
           carElement.style.transition = '';
           carElement.style.transform = fixTransform;
@@ -132,8 +139,13 @@ class Store {
     }
   }
 
-  async stopCar(id: number) {
+  async stopCar(
+    id: number,
+    controlDriveBtns: (id: number, status: 'drive' | 'stop' | 'lag') => void,
+  ) {
+    controlDriveBtns(id, 'lag');
     await ApiRace.engineControl(id, 'stopped');
+    controlDriveBtns(id, 'stop');
   }
 
   public updateSelectedCar(id: number) {

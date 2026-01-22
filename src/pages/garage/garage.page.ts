@@ -101,13 +101,22 @@ export default class GaragePage extends Page {
       store.changeCurPage('prev');
     });
 
-    this.carsList.addHandlerRunCar((id: number, maxDistance: number, carElement: Element) => {
-      store.runCar(id, maxDistance, carElement);
-    });
+    this.carsList.addHandlerRunCar(
+      (
+        id: number,
+        maxDistance: number,
+        carElement: Element,
+        controlDriveBtns: (id: number, status: 'drive' | 'stop' | 'lag') => void,
+      ) => {
+        store.runCar(id, maxDistance, carElement, controlDriveBtns);
+      },
+    );
 
-    this.carsList.addHandlerStopCar((id: number) => {
-      store.stopCar(id);
-    });
+    this.carsList.addHandlerStopCar(
+      (id: number, controlDriveBtns: (id: number, status: 'drive' | 'stop' | 'lag') => void) => {
+        store.stopCar(id, controlDriveBtns);
+      },
+    );
   }
 
   destroy() {
