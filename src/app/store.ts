@@ -1,6 +1,13 @@
 import ApiRace from '../core/services/api.services';
 import { getRandomCars } from '../core/services/randomCar';
-import { ErrorTypes, type Car, type carPower, type CarSet, type ControlDriveBtns } from '../types';
+import {
+  ErrorTypes,
+  type Car,
+  type carPower,
+  type CarSet,
+  type ControlDriveBtns,
+  type WinnerCar,
+} from '../types';
 
 type Listener = () => void;
 
@@ -11,6 +18,7 @@ class Store {
 
   private listeners: Listener[] = [];
   cars: Car[] = [];
+  winnersList: WinnerCar[] = [];
   selectedCar: null | Car = null;
   carFormDraft: CarSet = this.DEFAULT_CAR_VALUES;
   currentPage: number = 1;
@@ -22,6 +30,7 @@ class Store {
 
   constructor() {
     this.fetchCars();
+    this.fetchWinners();
   }
 
   async fetchCars() {
@@ -39,6 +48,18 @@ class Store {
     } finally {
       this.isLoading = false;
       this.notify();
+    }
+  }
+
+  async fetchWinners() {
+    try {
+      const winners = await ApiRace.getWinners();
+      this.winnersList = winners || [];
+      this.error = null;
+      console.log(this.winnersList);
+    } catch (error) {
+      this.error = '⚠️ Failed to fetch winners!';
+      console.error(error);
     }
   }
 
@@ -118,6 +139,7 @@ class Store {
 
     try {
       const winnerData = await Promise.any(racePromise);
+      this.addCarToWinnersList(winnerData);
       return winnerData;
     } catch (error) {
       console.error(error);
@@ -180,6 +202,22 @@ class Store {
       console.error(error);
       throw error;
     }
+  }
+
+  async addCarToWinnersList(winner: { id: number; time: number }) {
+    const { id, time } = winner;
+    const existingWinner = this.winnersList.find((winner) => winner.id === id);
+
+    if (existingWinner) {
+      await ApiRace.updateWinner(id, {
+        wins: existingWinner.wins + 1,
+        time: Math.min(existingWinner.time, time),
+      });
+    } else {
+      await ApiRace.createWinner({ id, wins: 1, time });
+    }
+
+    await this.fetchWinners();
   }
 
   async stopCar(

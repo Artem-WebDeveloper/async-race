@@ -50,28 +50,6 @@ export default class CarsList {
     this.container.append(this.carsInfo);
   }
 
-  public renderBtnsPagination(totalPages: number, currentPage: number) {
-    const btnsContainer = dom.create({ tag: 'div', classNames: ['cars__pagination'] });
-
-    if (currentPage === 1 && totalPages > 1) {
-      btnsContainer.append(this.btnNext);
-      this.container.append(btnsContainer);
-      return;
-    }
-
-    if (currentPage === totalPages && totalPages > 1) {
-      btnsContainer.append(this.btnPrev);
-      this.container.append(btnsContainer);
-      return;
-    }
-
-    if (currentPage < totalPages) {
-      btnsContainer.append(this.btnPrev, this.btnNext);
-      this.container.append(btnsContainer);
-      return;
-    }
-  }
-
   private createCar(name: string, color: string, id: number, selectedCar: Car | null) {
     const carElement = dom.create({ tag: 'li', classNames: ['cars__item'] });
     const carTop = dom.create({ tag: 'div', classNames: ['cars__item--top'] });

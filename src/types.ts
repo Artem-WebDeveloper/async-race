@@ -16,6 +16,17 @@ export type Car = {
   id: number;
 };
 
+export type WinnerCar = {
+  id: number;
+  wins: number;
+  time: number;
+};
+
+// export type WinnerCarTableFormat = Car & {
+//   wins: number;
+//   bestTime: number;
+// };
+
 export type CarSet = {
   name: string;
   color: string;

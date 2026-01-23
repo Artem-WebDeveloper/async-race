@@ -1,4 +1,4 @@
-import type { CarSet } from '../../types';
+import type { CarSet, WinnerCar } from '../../types';
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -28,12 +28,32 @@ export default class ApiRace {
     }
   }
 
+  static async getWinners() {
+    try {
+      const response = await ApiRace.fetchRequest('winners');
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
   static createCar(uploadData: CarSet) {
     return ApiRace.request('/garage', 'POST', uploadData);
   }
 
+  static createWinner(uploadData: WinnerCar) {
+    return ApiRace.request('/winners', 'POST', uploadData);
+  }
+
   static updateCar(uploadData: CarSet, id: number) {
     return ApiRace.request(`/garage/${id}`, 'PUT', uploadData);
+  }
+
+  static updateWinner(id: number, uploadData: Omit<WinnerCar, 'id'>) {
+    return ApiRace.request(`/winners/${id}`, 'PUT', uploadData);
   }
 
   static async request(url: string, method: 'POST' | 'PUT', body: unknown) {
