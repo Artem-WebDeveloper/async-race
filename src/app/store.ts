@@ -1,6 +1,6 @@
 import ApiRace from '../core/services/api.services';
 import { getRandomCars } from '../core/services/randomCar';
-import { ErrorTypes, type Car, type carPower, type CarSet } from '../types';
+import { ErrorTypes, type Car, type carPower, type CarSet, type ControlDriveBtns } from '../types';
 
 type Listener = () => void;
 
@@ -14,6 +14,8 @@ class Store {
   selectedCar: null | Car = null;
   carFormDraft: CarSet = this.DEFAULT_CAR_VALUES;
   currentPage: number = 1;
+
+  raceStatus: 'wait' | 'running' | 'finished' = 'wait';
 
   isLoading: boolean = false;
   error: string | null = null;
@@ -102,11 +104,49 @@ class Store {
     }
   }
 
+  async startRace(
+    cars: {
+      id: number;
+      maxTranslateX: number;
+      carElement: HTMLElement;
+    }[],
+    controlBtns: ControlDriveBtns,
+  ) {
+    const racePromise = cars.map(({ id, maxTranslateX, carElement }) => {
+      return this.runCar(id, maxTranslateX, carElement, controlBtns);
+    });
+
+    try {
+      const winnerData = await Promise.any(racePromise);
+      return winnerData;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async resetRace(
+    cars: {
+      id: number;
+    }[],
+    controlBtns: ControlDriveBtns,
+  ) {
+    const raceResetPromise = cars.map(({ id }) => {
+      return this.stopCar(id, controlBtns);
+    });
+
+    try {
+      await Promise.all(raceResetPromise);
+      return 'Race is reset';
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async runCar(
     id: number,
     maxTranslateX: number,
     carElement: Element,
-    controlDriveBtns: (id: number, status: 'drive' | 'stop' | 'lag') => void,
+    controlDriveBtns: ControlDriveBtns,
   ) {
     const CAR_START_POS = parseFloat(
       getComputedStyle(document.documentElement).getPropertyValue('--start-car-position-px').trim(),
@@ -126,6 +166,7 @@ class Store {
 
       try {
         await ApiRace.switchDrive(id);
+        return { id, time: timeSec };
       } catch (error) {
         if (!(error instanceof Error)) throw error;
         if (error.message === ErrorTypes.ERROR_500) {
@@ -133,9 +174,11 @@ class Store {
           carElement.style.transition = '';
           carElement.style.transform = fixTransform;
         }
+        throw error;
       }
     } catch (error) {
       console.error(error);
+      throw error;
     }
   }
 
@@ -159,7 +202,6 @@ class Store {
   public getVisibleCars() {
     const start = (this.currentPage - 1) * this.CARS_PER_PAGE;
     const end = this.currentPage * this.CARS_PER_PAGE;
-
     return this.cars.slice(start, end);
   }
 

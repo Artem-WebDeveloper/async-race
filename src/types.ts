@@ -22,3 +22,5 @@ export type CarSet = {
 };
 
 export type carPower = { velocity: number; distance: number };
+export type RaceResult = { id: number; time: number };
+export type ControlDriveBtns = (id: number, status: 'drive' | 'stop' | 'lag') => void;

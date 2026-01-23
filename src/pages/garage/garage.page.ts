@@ -4,7 +4,8 @@ import store from '../../app/store';
 import './garage.scss';
 import CarsList from './carsList/carsList';
 import CarsControl from './carsControl/carsControl';
-import type { CarSet } from '../../types';
+import type { CarSet, ControlDriveBtns } from '../../types';
+import dom from '../../core/templates/creator';
 
 export default class GaragePage extends Page {
   static TextObject = {
@@ -46,6 +47,32 @@ export default class GaragePage extends Page {
     this.carsList.renderCarsInfo(store.getCurPage(), store.getTotalPages(), store.getTotalCars());
     this.carsList.renderCarsList(store.getVisibleCars(), store.getSelectedCar());
   };
+
+  showWinner(nameWinner?: string, timeWinner?: string) {
+    const modal = dom.create({ tag: 'div', classNames: ['modal-winner'] });
+    const name = dom.create({ tag: 'p', classNames: ['modal-winner__name'] });
+    const time = dom.create({ tag: 'p', classNames: ['modal-winner__time'] });
+
+    if (nameWinner && timeWinner) {
+      name.innerHTML = `🏆 <span class="modal-winner__name--accent">${nameWinner}</span> won the race!`;
+      time.textContent = `⏱️ ${timeWinner} sec`;
+    } else {
+      name.textContent = `No winners!`;
+      time.textContent = `All cars have broken`;
+    }
+
+    const closeModal = (event: PointerEvent) => {
+      const target = event.target;
+      if (target instanceof HTMLElement && target.closest('.modal-winner')) return;
+      modal.remove();
+      document.removeEventListener('click', closeModal);
+    };
+
+    document.addEventListener('click', closeModal);
+
+    modal.append(name, time);
+    this.container.append(modal);
+  }
 
   public render() {
     const header = this.createHeaderTitle(GaragePage.TextObject.MAIN_TITLE);
@@ -95,10 +122,12 @@ export default class GaragePage extends Page {
 
     this.carsList.addHandlerBtnNext(() => {
       store.changeCurPage('next');
+      this.carsControl.enableRaceBtns();
     });
 
     this.carsList.addHandlerBtnPrev(() => {
       store.changeCurPage('prev');
+      this.carsControl.enableRaceBtns();
     });
 
     this.carsList.addHandlerRunCar(
@@ -106,17 +135,52 @@ export default class GaragePage extends Page {
         id: number,
         maxDistance: number,
         carElement: Element,
-        controlDriveBtns: (id: number, status: 'drive' | 'stop' | 'lag') => void,
+        controlDriveBtns: ControlDriveBtns,
       ) => {
         store.runCar(id, maxDistance, carElement, controlDriveBtns);
       },
     );
 
-    this.carsList.addHandlerStopCar(
-      (id: number, controlDriveBtns: (id: number, status: 'drive' | 'stop' | 'lag') => void) => {
-        store.stopCar(id, controlDriveBtns);
-      },
-    );
+    this.carsList.addHandlerStopCar((id: number, controlDriveBtns: ControlDriveBtns) => {
+      store.stopCar(id, controlDriveBtns);
+    });
+
+    this.carsControl.addHandlerStartRace(async () => {
+      console.log('start race');
+      const cars = this.carsList.collectCarsRace();
+
+      try {
+        this.carsControl.disableRaceBtns();
+        const result = await store.startRace(cars, this.carsList.setDisabledRunBtns);
+        if (!result) {
+          this.showWinner();
+          return;
+        }
+        const winner = store.getVisibleCars().find((car) => car.id === result.id);
+
+        const winnerName = winner?.name || 'No name';
+        const winnerTime = result.time.toFixed(2);
+
+        this.showWinner(winnerName, winnerTime);
+      } finally {
+        this.carsControl.enableResetBtn();
+      }
+    });
+
+    this.carsControl.addHandlerResetRace(async () => {
+      console.log('stop race');
+      this.carsControl.displayLoading(true);
+      const cars = this.carsList.collectCarsRace();
+
+      try {
+        this.carsControl.disableRaceBtns();
+        this.carsList.resetTransformCars();
+        await store.resetRace(cars, this.carsList.setDisabledRunBtns);
+      } finally {
+        this.carsControl.enableRaceBtns();
+        this.carsControl.displayLoading(false);
+      }
+    });
   }
 
   destroy() {

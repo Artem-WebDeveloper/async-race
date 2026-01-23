@@ -1,0 +1,38 @@
+.garage-page {
+  position: relative;
+}
+
+.modal-winner {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  padding: 3.8rem;
+  min-width: 30rem;
+  border-radius: 0.8rem;
+  backdrop-filter: blur(4rem);
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.4);
+  text-align: center;
+  font-size: 2rem;
+  animation: fade-in 0.8s;
+
+  &__name {
+    &--accent {
+      color: var(--color-car-name);
+    }
+  }
+
+  &__time {
+    font-weight: 500;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

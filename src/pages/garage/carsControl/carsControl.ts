@@ -8,6 +8,8 @@ export default class CarsControl {
   createCarForm: HTMLFormElement;
   updateCarForm: HTMLFormElement;
   btnGenerateCars: HTMLButtonElement;
+  btnStartRace: HTMLButtonElement;
+  btnResetRace: HTMLButtonElement;
 
   constructor() {
     this.container = dom.create({ tag: 'div', classNames: ['controls'] });
@@ -15,8 +17,20 @@ export default class CarsControl {
     this.updateCarForm = this.createForm('update');
     this.btnGenerateCars = dom.create({
       tag: 'button',
-      classNames: ['controls__btn'],
+      classNames: ['controls__btn', 'controls__btn--generate'],
       text: 'Generate 100 Random Cars',
+    });
+
+    this.btnStartRace = dom.create({
+      tag: 'button',
+      classNames: ['controls__btn', 'controls__btn--start-race'],
+      text: 'Race🏁',
+    });
+
+    this.btnResetRace = dom.create({
+      tag: 'button',
+      classNames: ['controls__btn', 'controls__btn--reset-race'],
+      text: 'Reset🔁',
     });
   }
 
@@ -89,6 +103,14 @@ export default class CarsControl {
     this.btnGenerateCars.addEventListener('click', handler);
   }
 
+  addHandlerStartRace(handler: () => void) {
+    this.btnStartRace.addEventListener('click', handler);
+  }
+
+  addHandlerResetRace(handler: () => void) {
+    this.btnResetRace.addEventListener('click', handler);
+  }
+
   setActualCreateFormValues(car: CarSet) {
     const color = this.createCarForm.color;
     const name = this.createCarForm.nameField;
@@ -118,8 +140,27 @@ export default class CarsControl {
     [color, btn, name].forEach((elem) => (elem.disabled = true));
   }
 
+  disableRaceBtns() {
+    this.btnResetRace.disabled = this.btnStartRace.disabled = true;
+  }
+
+  enableRaceBtns() {
+    this.btnResetRace.disabled = this.btnStartRace.disabled = false;
+  }
+
+  enableResetBtn() {
+    this.btnResetRace.disabled = false;
+  }
+
+  displayLoading(isLoading: boolean) {
+    this.btnResetRace.textContent = isLoading ? 'Loading...' : 'Reset🔁';
+  }
+
   render() {
-    this.container.append(this.createCarForm, this.updateCarForm, this.btnGenerateCars);
+    const btnsBottom = dom.create({ tag: 'div', classNames: ['controls__btns'] });
+    btnsBottom.append(this.btnGenerateCars, this.btnStartRace, this.btnResetRace);
+
+    this.container.append(this.createCarForm, this.updateCarForm, btnsBottom);
     return this.container;
   }
 }

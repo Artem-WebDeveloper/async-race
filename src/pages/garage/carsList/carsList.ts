@@ -1,5 +1,5 @@
 import dom from '../../../core/templates/creator';
-import type { Car } from '../../../types';
+import type { Car, ControlDriveBtns } from '../../../types';
 
 import './carsList.scss';
 
@@ -132,7 +132,7 @@ export default class CarsList {
       id: number,
       maxDistance: number,
       car: Element,
-      controlDriveBtns: (id: number, status: 'drive' | 'stop' | 'lag') => void,
+      controlDriveBtns: ControlDriveBtns,
     ) => void,
   ) {
     this.carsList.addEventListener('click', (event) => {
@@ -141,24 +141,26 @@ export default class CarsList {
       if (!target.closest('.cars__btn--go')) return;
 
       const car = document.querySelector(`[data-car-model-id="${target.dataset.carId}"]`);
-      const track = car?.closest('.cars__item')?.querySelector('.cars__item--bottom');
-      let maxTranslateX = 0;
-      if (!car || !track) return;
-
-      if (car instanceof HTMLElement && track instanceof HTMLElement) {
-        maxTranslateX = track.offsetWidth - car.offsetWidth;
-      }
+      if (!car) return;
+      const maxTranslateX = this.getMaxTranslateX(Number(target.dataset.carId)) || 0;
 
       handler(Number(target.dataset.carId), maxTranslateX, car, this.setDisabledRunBtns);
     });
   }
 
-  addHandlerStopCar(
-    handler: (
-      id: number,
-      controlDriveBtns: (id: number, status: 'drive' | 'stop' | 'lag') => void,
-    ) => void,
-  ) {
+  getMaxTranslateX(id: number) {
+    const car = document.querySelector(`[data-car-model-id="${id}"]`);
+    const track = car?.closest('.cars__item')?.querySelector('.cars__item--bottom');
+    let maxTranslateX = 0;
+    if (!car || !track) return maxTranslateX;
+
+    if (car instanceof HTMLElement && track instanceof HTMLElement) {
+      maxTranslateX = track.offsetWidth - car.offsetWidth;
+    }
+    return maxTranslateX;
+  }
+
+  addHandlerStopCar(handler: (id: number, controlDriveBtns: ControlDriveBtns) => void) {
     this.carsList.addEventListener('click', (event) => {
       const target = event.target;
       if (!(target instanceof HTMLButtonElement)) return;
@@ -173,6 +175,13 @@ export default class CarsList {
     });
   }
 
+  resetTransformCars() {
+    Array.from(document.querySelectorAll<HTMLElement>('.cars__figure')).forEach((carElement) => {
+      carElement.style.transform = `translateX(0)`;
+      carElement.style.transition = '';
+    });
+  }
+
   setDisabledRunBtns = (carId: number, status: 'drive' | 'stop' | 'lag') => {
     const btnGo = this.carsList.querySelector<HTMLButtonElement>(
       `.cars__btn--go[data-car-id="${carId}"]`,
@@ -180,7 +189,6 @@ export default class CarsList {
     const btnStop = this.carsList.querySelector<HTMLButtonElement>(
       `.cars__btn--stop[data-car-id="${carId}"]`,
     );
-    console.log(btnGo, btnStop);
     if (!btnGo || !btnStop) return;
 
     const isDrive = status === 'drive';
@@ -188,6 +196,17 @@ export default class CarsList {
     btnGo.disabled = isLag ? true : isDrive;
     btnStop.disabled = isLag ? true : !isDrive;
   };
+
+  collectCarsRace() {
+    return Array.from(document.querySelectorAll<HTMLElement>('.cars__figure')).map((carElement) => {
+      const id = Number(carElement.dataset.carModelId);
+      return {
+        id: id,
+        maxTranslateX: this.getMaxTranslateX(id),
+        carElement,
+      };
+    });
+  }
 
   addHandlerDeleteCar(handler: (id: number) => void) {
     this.carsList.addEventListener('click', (event) => {

@@ -5,9 +5,23 @@
   max-width: 40rem;
   gap: 1rem;
 
+  &__btns {
+    display: flex;
+    margin-top: 1rem;
+    gap: 1rem;
+  }
+
   &__btn {
     cursor: pointer;
     height: 3rem;
+
+    &--generate {
+      flex-basis: 50%;
+    }
+    &--start-race,
+    &--reset-race {
+      flex-basis: 25%;
+    }
   }
 }
 
