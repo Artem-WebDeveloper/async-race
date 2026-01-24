@@ -23,7 +23,7 @@ export default class GaragePage extends Page {
     this.carsContainer = this.carsList.render();
     this.controlContainer = this.carsControl.render();
 
-    this.unsubscribe = store.subscribe(this.renderCars);
+    this.unsubscribe = store.subscribe(this.renderCars, 'garage');
 
     this.initHandlers();
   }

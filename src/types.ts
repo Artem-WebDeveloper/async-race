@@ -22,10 +22,10 @@ export type WinnerCar = {
   time: number;
 };
 
-// export type WinnerCarTableFormat = Car & {
-//   wins: number;
-//   bestTime: number;
-// };
+export type WinnerCarTableFormat = Car & {
+  wins: number;
+  bestTime: number;
+};
 
 export type CarSet = {
   name: string;

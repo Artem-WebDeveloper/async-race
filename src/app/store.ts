@@ -7,6 +7,7 @@ import {
   type CarSet,
   type ControlDriveBtns,
   type WinnerCar,
+  type WinnerCarTableFormat,
 } from '../types';
 
 type Listener = () => void;
@@ -16,14 +17,14 @@ class Store {
   COUNT_GENERATED_CARS: number = 100;
   DEFAULT_CAR_VALUES: CarSet = { name: '', color: '#000000' };
 
-  private listeners: Listener[] = [];
+  private listenersGarage = new Set<Listener>();
+  private listenersWinners = new Set<Listener>();
+
   cars: Car[] = [];
   winnersList: WinnerCar[] = [];
   selectedCar: null | Car = null;
   carFormDraft: CarSet = this.DEFAULT_CAR_VALUES;
   currentPage: number = 1;
-
-  raceStatus: 'wait' | 'running' | 'finished' = 'wait';
 
   isLoading: boolean = false;
   error: string | null = null;
@@ -35,7 +36,7 @@ class Store {
 
   async fetchCars() {
     this.isLoading = true;
-    this.notify();
+    this.notify('garage');
 
     try {
       const cars = await ApiRace.getGarage();
@@ -47,7 +48,8 @@ class Store {
       this.cars = [];
     } finally {
       this.isLoading = false;
-      this.notify();
+      this.notify('garage');
+      this.notify('winners');
     }
   }
 
@@ -56,10 +58,11 @@ class Store {
       const winners = await ApiRace.getWinners();
       this.winnersList = winners || [];
       this.error = null;
-      console.log(this.winnersList);
     } catch (error) {
       this.error = '⚠️ Failed to fetch winners!';
       console.error(error);
+    } finally {
+      this.notify('winners');
     }
   }
 
@@ -70,14 +73,14 @@ class Store {
     } catch (error) {
       this.error = '⚠️ Failed to add car!';
       console.error(error);
-      this.notify();
+      this.notify('garage');
     }
   }
 
   async generateRandomCars() {
     try {
       this.isLoading = true;
-      this.notify();
+      this.notify('garage');
 
       const newCars = getRandomCars(this.COUNT_GENERATED_CARS);
       const uploadingNewCars = newCars.map((car) => ApiRace.createCar(car));
@@ -86,11 +89,11 @@ class Store {
       await this.fetchCars();
     } catch (error) {
       this.error = `⚠️ Failed to generate ${this.COUNT_GENERATED_CARS} cars!`;
-      this.notify();
+      this.notify('garage');
       console.error(error);
     } finally {
       this.isLoading = false;
-      this.notify();
+      this.notify('garage');
     }
   }
 
@@ -103,7 +106,7 @@ class Store {
     } catch (error) {
       this.error = '⚠️ Failed to update car!';
       console.error(error);
-      this.notify();
+      this.notify('garage');
     }
   }
 
@@ -117,11 +120,11 @@ class Store {
 
       await this.fetchCars();
       this.normalizeCurrentPage();
-      this.notify();
+      this.notify('garage');
     } catch (error) {
       this.error = '⚠️ Failed to delete car!';
       console.error(error);
-      this.notify();
+      this.notify('garage');
     }
   }
 
@@ -220,6 +223,21 @@ class Store {
     await this.fetchWinners();
   }
 
+  getWinnersInfo(): WinnerCarTableFormat[] {
+    if (!this.winnersList.length) return [];
+
+    return this.winnersList.map((winner) => {
+      const car = this.cars.find((car) => car.id === winner.id);
+      return {
+        name: car?.name || 'No name',
+        color: car?.color || '#00000',
+        bestTime: winner.time,
+        wins: winner.wins,
+        id: winner.id,
+      };
+    });
+  }
+
   async stopCar(
     id: number,
     controlDriveBtns: (id: number, status: 'drive' | 'stop' | 'lag') => void,
@@ -254,7 +272,7 @@ class Store {
       this.currentPage--;
     }
 
-    this.notify();
+    this.notify('garage');
   }
 
   private normalizeCurrentPage() {
@@ -278,16 +296,19 @@ class Store {
     return this.currentPage;
   }
 
-  public subscribe(listener: Listener) {
-    this.listeners.push(listener);
+  public subscribe(listener: Listener, page: 'garage' | 'winners') {
+    const listeners = page === 'garage' ? this.listenersGarage : this.listenersWinners;
+    listeners.add(listener);
 
     return () => {
-      this.listeners = this.listeners.filter((observer) => observer !== listener);
+      listeners.delete(listener);
     };
   }
 
-  private notify() {
-    this.listeners.forEach((listener) => listener());
+  private notify(page: 'garage' | 'winners') {
+    const listeners = page === 'garage' ? this.listenersGarage : this.listenersWinners;
+
+    listeners.forEach((listener) => listener());
   }
 }
 
