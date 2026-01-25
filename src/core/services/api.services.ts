@@ -28,12 +28,29 @@ export default class ApiRace {
     }
   }
 
-  static async getWinners() {
+  static async getWinners(
+    page: number,
+    limit: number,
+    sortField?: 'wins' | 'time' | null,
+    sortOrder?: 'ASC' | 'DESC',
+  ) {
     try {
-      const response = await ApiRace.fetchRequest('winners');
-      const data = await response.json();
+      if (!BASE_URL) throw new Error('ENV: VITE_API_URL is not defined');
 
-      return data;
+      let url = `${BASE_URL}/winners?_limit=${limit}&_page=${page}`;
+
+      if (sortField && sortOrder) {
+        url += `&_sort=${sortField}&_order=${sortOrder}`;
+      }
+
+      const response = await fetch(url);
+
+      if (!response.ok) throw new Error(`Error Status: ${response.status.toString()}`);
+
+      const total = Number(response.headers.get('X-Total-Count')) || 0;
+      const winners = await response.json();
+
+      return { winners, total };
     } catch (error) {
       console.log(error);
       throw error;

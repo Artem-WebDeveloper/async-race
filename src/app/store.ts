@@ -14,6 +14,7 @@ type Listener = () => void;
 
 class Store {
   CARS_PER_PAGE: number = 7;
+  WINNERS_PER_PAGE: number = 10;
   COUNT_GENERATED_CARS: number = 100;
   DEFAULT_CAR_VALUES: CarSet = { name: '', color: '#000000' };
 
@@ -25,6 +26,11 @@ class Store {
   selectedCar: null | Car = null;
   carFormDraft: CarSet = this.DEFAULT_CAR_VALUES;
   currentPage: number = 1;
+  currentWinnersPage: number = 1;
+  totalWinners: number = 0;
+
+  sortField: 'wins' | 'time' | null = null;
+  sortOrder: 'ASC' | 'DESC' = 'ASC';
 
   isLoading: boolean = false;
   error: string | null = null;
@@ -55,7 +61,13 @@ class Store {
 
   async fetchWinners() {
     try {
-      const winners = await ApiRace.getWinners();
+      const { winners, total } = await ApiRace.getWinners(
+        this.currentWinnersPage,
+        this.WINNERS_PER_PAGE,
+        this.sortField,
+        this.sortOrder,
+      );
+      this.totalWinners = total;
       this.winnersList = winners || [];
       this.error = null;
     } catch (error) {
@@ -275,6 +287,20 @@ class Store {
     this.notify('garage');
   }
 
+  public changeWinnersCurPage(page: 'next' | 'prev') {
+    const totalPages = this.getTotalWinnersPages();
+
+    if (page === 'next' && this.currentWinnersPage < totalPages) {
+      this.currentWinnersPage++;
+    }
+
+    if (page === 'prev' && this.currentWinnersPage > 1) {
+      this.currentWinnersPage--;
+    }
+
+    this.fetchWinners();
+  }
+
   private normalizeCurrentPage() {
     const maxPage = Math.max(1, Math.ceil(this.cars.length / this.CARS_PER_PAGE));
     if (this.currentPage > maxPage) this.currentPage = maxPage;
@@ -288,12 +314,24 @@ class Store {
     return this.cars.length;
   }
 
+  public getTotalWinnersCars() {
+    return this.totalWinners;
+  }
+
   getTotalPages() {
     return Math.ceil(this.cars.length / this.CARS_PER_PAGE);
   }
 
+  getTotalWinnersPages() {
+    return Math.ceil(this.totalWinners / this.WINNERS_PER_PAGE);
+  }
+
   public getCurPage() {
     return this.currentPage;
+  }
+
+  public getCurWinnersPage() {
+    return this.currentWinnersPage;
   }
 
   public subscribe(listener: Listener, page: 'garage' | 'winners') {

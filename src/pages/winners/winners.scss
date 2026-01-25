@@ -1,5 +1,11 @@
 .winners-table {
-  margin-top: 5rem;
+  &__info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3.5rem;
+    margin-bottom: 2rem;
+  }
+
   &__table {
     margin: 0 auto;
     max-width: 60rem;
@@ -29,6 +35,7 @@
     align-items: center;
     & span {
       flex: 1;
+      padding: 0.3rem 0;
       text-transform: capitalize;
       text-align: center;
       display: flex;
@@ -53,4 +60,8 @@
       height: 100%;
     }
   }
+}
+
+.sortable {
+  cursor: pointer;
 }
