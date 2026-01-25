@@ -4,6 +4,22 @@
   --bg-color: #242424;
 
   --start-car-position-px: 60px;
+
+  --bg-main: #0f172a;
+  --bg-main: #10131a;
+  --bg-card: #1e293b;
+  --accent-blue: #38bdf8;
+  --accent-purple: #818cf8;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+
+  --color-win: #4ade80;
+  --color-danger: #a50a0a;
+  --color-gold: #fbbf24;
+
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --glass: rgba(255, 255, 255, 0.03);
 }
 
 *,
@@ -34,6 +50,7 @@ body {
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
     'Helvetica Neue', sans-serif;
   background: var(--bg-color);
+  background: var(--bg-main);
   min-height: 100vh;
   font-size: 1.8rem;
   line-height: 1.6;
@@ -49,4 +66,25 @@ main {
   margin: 0 auto;
   max-width: 144rem;
   padding: 0 2rem;
+}
+
+.btn-pagination {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  padding: 0.8rem 1.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: var(--transition);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      cursor: pointer;
+      background: var(--accent-purple);
+      border-color: var(--accent-purple);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    filter: grayscale(0.7);
+  }
 }

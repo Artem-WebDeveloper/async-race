@@ -153,7 +153,11 @@ export default class CarsControl {
   }
 
   displayLoading(isLoading: boolean) {
-    this.btnResetRace.textContent = isLoading ? 'Loading...' : 'Reset🔁';
+    this.btnResetRace.classList.toggle('is-loading', isLoading);
+  }
+
+  displayLoadingRace(isLoading: boolean) {
+    this.btnStartRace.classList.toggle('is-loading', isLoading);
   }
 
   render() {

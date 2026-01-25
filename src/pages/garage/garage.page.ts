@@ -151,6 +151,7 @@ export default class GaragePage extends Page {
 
       try {
         this.carsControl.disableRaceBtns();
+        this.carsControl.displayLoadingRace(true);
         const result = await store.startRace(cars, this.carsList.setDisabledRunBtns);
         if (!result) {
           this.showWinner();
@@ -164,6 +165,7 @@ export default class GaragePage extends Page {
         this.showWinner(winnerName, winnerTime);
       } finally {
         this.carsControl.enableResetBtn();
+        this.carsControl.displayLoadingRace(false);
       }
     });
 

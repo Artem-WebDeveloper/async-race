@@ -148,6 +148,7 @@ export default class CarsList {
 
       car.style.transform = `translateX(0)`;
       car.style.transition = '';
+      car.classList.remove('car--broken');
 
       handler(Number(target.dataset.carId), this.setDisabledRunBtns);
     });
@@ -155,6 +156,8 @@ export default class CarsList {
 
   resetTransformCars() {
     Array.from(document.querySelectorAll<HTMLElement>('.cars__figure')).forEach((carElement) => {
+      carElement.classList.remove('car--broken');
+
       carElement.style.transform = `translateX(0)`;
       carElement.style.transition = '';
     });

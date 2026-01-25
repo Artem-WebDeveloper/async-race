@@ -150,8 +150,8 @@ export default class WinnersPage extends Page {
   renderCarsInfo(currentPage: number, totalPages: number, carsAll: number) {
     this.winnersInfo.replaceChildren();
 
-    const carsQuantity = dom.create({ tag: 'p', text: `Winners All: ${String(carsAll)}` });
-    const currentPageElement = dom.create({ tag: 'p', text: `Page #${String(currentPage)}` });
+    const carsQuantity = dom.create({ tag: 'p', text: `🥇 Winners All: ${String(carsAll)}` });
+    const currentPageElement = dom.create({ tag: 'p', text: `# ${String(currentPage)}` });
 
     this.btnPrev.disabled = currentPage <= 1;
     this.btnNext.disabled = currentPage >= totalPages;

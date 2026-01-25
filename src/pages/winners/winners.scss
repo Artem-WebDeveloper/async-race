@@ -2,21 +2,28 @@
   &__info {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-top: 3.5rem;
     margin-bottom: 2rem;
+
+    & p {
+      font-size: 2rem;
+    }
   }
 
   &__table {
     margin: 0 auto;
     max-width: 60rem;
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 1.5rem rgba(56, 189, 248, 0.2);
   }
 
   &__head {
     display: flex;
     justify-content: space-around;
-    background-color: rgb(13, 184, 207);
-    border-bottom: 2px solid #fff;
+    background-color: rgba(56, 189, 248, 0.2);
+    border: 1px solid #fff;
+
     & span {
       padding: 0.3rem 0;
       flex: 1;
@@ -24,7 +31,7 @@
       text-align: center;
 
       &:not(:first-child) {
-        border-left: 1px solid rgba(255, 255, 255, 0.208);
+        border-left: 1px solid rgba(255, 255, 255, 0.5);
       }
     }
   }
@@ -40,10 +47,6 @@
       text-align: center;
       display: flex;
       justify-content: center;
-
-      /* &:not(:first-child) {
-        border-left: 1px solid rgba(255, 255, 255, 0.208);
-      } */
     }
 
     &:nth-child(odd) {
@@ -64,4 +67,11 @@
 
 .sortable {
   cursor: pointer;
+  background: rgba(56, 189, 248, 0.25);
+  transition: var(--transition);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      backdrop-filter: brightness(1.8);
+    }
+  }
 }

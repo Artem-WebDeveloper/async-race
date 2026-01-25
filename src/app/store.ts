@@ -198,6 +198,7 @@ class Store {
 
       if (!(carElement instanceof HTMLElement)) throw new Error('Car Element is not Found!');
 
+      carElement.classList.remove('car--broken');
       carElement.style.transition = `transform ${timeSec}s linear`;
       carElement.style.transform = `translateX(${maxTranslateX - CAR_START_POS}px)`;
 
@@ -210,6 +211,7 @@ class Store {
           const fixTransform = getComputedStyle(carElement).transform;
           carElement.style.transition = '';
           carElement.style.transform = fixTransform;
+          carElement.classList.add('car--broken');
         }
         throw error;
       }
