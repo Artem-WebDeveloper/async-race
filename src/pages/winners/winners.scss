@@ -6,7 +6,7 @@
     margin-top: 3.5rem;
     margin-bottom: 2rem;
 
-    & p {
+    &--quantity {
       font-size: 2rem;
     }
   }
@@ -14,18 +14,23 @@
   &__table {
     margin: 0 auto;
     max-width: 60rem;
-    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
     box-shadow: 0 0 1.5rem rgba(56, 189, 248, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--glass);
   }
 
   &__head {
     display: flex;
     justify-content: space-around;
     background-color: rgba(56, 189, 248, 0.2);
-    border: 1px solid #fff;
+    background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.584);
 
     & span {
-      padding: 0.3rem 0;
+      font-weight: 600;
+      user-select: none;
+      padding: 0.5rem 0;
       flex: 1;
       text-transform: capitalize;
       text-align: center;
@@ -67,11 +72,10 @@
 
 .sortable {
   cursor: pointer;
-  background: rgba(56, 189, 248, 0.25);
   transition: var(--transition);
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      backdrop-filter: brightness(1.8);
+      backdrop-filter: brightness(1.25);
     }
   }
 }

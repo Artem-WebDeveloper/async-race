@@ -5,7 +5,6 @@
 
   --start-car-position-px: 60px;
 
-  --bg-main: #0f172a;
   --bg-main: #10131a;
   --bg-card: #1e293b;
   --accent-blue: #38bdf8;
@@ -69,22 +68,23 @@ main {
 }
 
 .btn-pagination {
-  background: var(--bg-card);
   color: var(--text-primary);
   padding: 0.8rem 1.6rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: none;
   transition: var(--transition);
+
+  background: transparent;
+  border-radius: 5rem;
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled) {
       cursor: pointer;
-      background: var(--accent-purple);
-      border-color: var(--accent-purple);
+      background: var(--accent-blue);
     }
   }
 
   &:disabled {
-    opacity: 0.4;
-    filter: grayscale(0.7);
+    opacity: 0.3;
+    filter: grayscale(0.8);
   }
 }

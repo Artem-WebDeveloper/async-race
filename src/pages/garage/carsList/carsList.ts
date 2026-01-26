@@ -15,8 +15,8 @@ export default class CarsList {
     this.carsList = dom.create({ tag: 'ul', classNames: ['cars__list'] });
     this.carsInfo = dom.create({ tag: 'div', classNames: ['cars__info'] });
 
-    this.btnPrev = dom.create({ tag: 'button', classNames: ['btn-pagination'], text: '← Prev' });
-    this.btnNext = dom.create({ tag: 'button', classNames: ['btn-pagination'], text: 'Next →' });
+    this.btnPrev = dom.create({ tag: 'button', classNames: ['btn-pagination'], text: '←' });
+    this.btnNext = dom.create({ tag: 'button', classNames: ['btn-pagination'], text: '→' });
   }
 
   render() {
@@ -37,8 +37,13 @@ export default class CarsList {
   public renderCarsInfo(currentPage: number, totalPages: number, carsAll: number) {
     this.carsInfo.replaceChildren();
 
-    const carsQuantity = dom.create({ tag: 'p', text: `Cars All: ${String(carsAll)}` });
-    const currentPageElement = dom.create({ tag: 'p', text: `Page #${String(currentPage)}` });
+    const carsQuantity = dom.create({ tag: 'p', classNames: ['cars__info--quantity'] });
+    carsQuantity.innerHTML = `Cars All: <span class="modal-winner__name--accent">${String(carsAll)}</span>`;
+
+    const currentPageElement = dom.create({
+      tag: 'p',
+      text: `${String(currentPage)} / ${String(totalPages)}`,
+    });
 
     this.btnPrev.disabled = currentPage <= 1;
     this.btnNext.disabled = currentPage >= totalPages;

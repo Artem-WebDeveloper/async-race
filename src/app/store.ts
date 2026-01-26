@@ -16,7 +16,7 @@ class Store {
   CARS_PER_PAGE: number = 7;
   WINNERS_PER_PAGE: number = 10;
   COUNT_GENERATED_CARS: number = 100;
-  DEFAULT_CAR_VALUES: CarSet = { name: '', color: '#000000' };
+  DEFAULT_CAR_VALUES: CarSet = { name: '', color: '#ffffff' };
 
   private listenersGarage = new Set<Listener>();
   private listenersWinners = new Set<Listener>();
@@ -148,6 +148,12 @@ class Store {
     }[],
     controlBtns: ControlDriveBtns,
   ) {
+    cars.forEach((car) => {
+      car.carElement.style.transform = `translateX(0)`;
+      car.carElement.style.transition = '';
+      car.carElement.classList.remove('car--broken');
+    });
+
     const racePromise = cars.map(({ id, maxTranslateX, carElement }) => {
       return this.runCar(id, maxTranslateX, carElement, controlBtns);
     });

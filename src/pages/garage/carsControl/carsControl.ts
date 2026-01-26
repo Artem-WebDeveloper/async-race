@@ -18,7 +18,7 @@ export default class CarsControl {
     this.btnGenerateCars = dom.create({
       tag: 'button',
       classNames: ['controls__btn', 'controls__btn--generate'],
-      text: 'Generate 100 Random Cars',
+      text: 'Generate 100 Cars',
     });
 
     this.btnStartRace = dom.create({
@@ -69,7 +69,7 @@ export default class CarsControl {
       const newCar = { name, color };
       handler(newCar);
       this.createCarForm.nameField.value = '';
-      this.createCarForm.color.value = '#000000';
+      this.createCarForm.color.value = '#ffffff';
     });
   }
 

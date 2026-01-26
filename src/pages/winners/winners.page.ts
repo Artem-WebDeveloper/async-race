@@ -31,8 +31,8 @@ export default class WinnersPage extends Page {
     this.tableContainer = dom.create({ tag: 'div', classNames: ['winners-table'] });
 
     this.winnersInfo = dom.create({ tag: 'div', classNames: ['winners-table__info'] });
-    this.btnPrev = dom.create({ tag: 'button', classNames: ['btn-pagination'], text: '← Prev' });
-    this.btnNext = dom.create({ tag: 'button', classNames: ['btn-pagination'], text: 'Next →' });
+    this.btnPrev = dom.create({ tag: 'button', classNames: ['btn-pagination'], text: '←' });
+    this.btnNext = dom.create({ tag: 'button', classNames: ['btn-pagination'], text: '→' });
 
     this.unsubscribe = store.subscribe(this.renderWinnerTable, 'winners');
 
@@ -150,8 +150,12 @@ export default class WinnersPage extends Page {
   renderCarsInfo(currentPage: number, totalPages: number, carsAll: number) {
     this.winnersInfo.replaceChildren();
 
-    const carsQuantity = dom.create({ tag: 'p', text: `🥇 Winners All: ${String(carsAll)}` });
-    const currentPageElement = dom.create({ tag: 'p', text: `# ${String(currentPage)}` });
+    const carsQuantity = dom.create({ tag: 'p', classNames: ['winners-table__info--quantity'] });
+    carsQuantity.innerHTML = `🥇 Winners All: <span class="modal-winner__name--accent">${String(carsAll)}</span>`;
+    const currentPageElement = dom.create({
+      tag: 'p',
+      text: `${String(currentPage)} / ${String(totalPages)}`,
+    });
 
     this.btnPrev.disabled = currentPage <= 1;
     this.btnNext.disabled = currentPage >= totalPages;
