@@ -49,7 +49,7 @@ class Store {
       this.cars = cars || [];
       this.error = null;
     } catch (error) {
-      this.error = '⚠️ Failed to load cars!';
+      this.error = '⚠️ Failed to load cars! Please ensure the server is running :)';
       console.error(error);
       this.cars = [];
     } finally {
@@ -71,7 +71,7 @@ class Store {
       this.winnersList = winners || [];
       this.error = null;
     } catch (error) {
-      this.error = '⚠️ Failed to fetch winners!';
+      this.error = '⚠️ Failed to fetch garage and winners! Please ensure the server is running :)';
       console.error(error);
     } finally {
       this.notify('winners');
@@ -124,19 +124,22 @@ class Store {
 
   async deleteCar(id: number) {
     try {
-      await ApiRace.deleteCar(id);
+      await ApiRace.deleteCar(id, 'garage');
+
+      await ApiRace.deleteCar(id, 'winners');
 
       if (this.selectedCar?.id === id) {
         this.selectedCar = null;
       }
 
       await this.fetchCars();
+      await this.fetchWinners();
       this.normalizeCurrentPage();
-      this.notify('garage');
     } catch (error) {
       this.error = '⚠️ Failed to delete car!';
       console.error(error);
       this.notify('garage');
+      this.notify('winners');
     }
   }
 

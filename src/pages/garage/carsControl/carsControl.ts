@@ -127,8 +127,8 @@ export default class CarsControl {
     name.value = car.name;
     color.value = car.color;
 
-    name.focus();
     [color, btn, name].forEach((elem) => (elem.disabled = false));
+    name.focus();
   }
 
   deactivateUpdateForm() {

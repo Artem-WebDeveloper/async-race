@@ -12,6 +12,7 @@
   }
 
   &__btn {
+    user-select: none;
     font-family: inherit;
     letter-spacing: 0.6px;
     padding: 1rem 1.5rem;

@@ -91,15 +91,17 @@ export default class ApiRace {
     }
   }
 
-  static async deleteCar(id: number) {
+  static async deleteCar(id: number, from: 'garage' | 'winners') {
     try {
       if (!BASE_URL) throw new Error('ENV: VITE_API_URL is not defined');
 
-      const response = await fetch(`${BASE_URL}/garage/${id}`, {
+      const response = await fetch(`${BASE_URL}/${from}/${id}`, {
         method: 'DELETE',
       });
 
-      if (!response.ok) throw new Error(`Error Status: ${response.status.toString()}`);
+      if (!response.ok && !(from === 'winners' && response.status === 404)) {
+        throw new Error(`Error Status: ${response.status.toString()}`);
+      }
     } catch (error) {
       console.log(error);
       throw error;

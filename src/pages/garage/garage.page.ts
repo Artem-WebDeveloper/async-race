@@ -146,7 +146,6 @@ export default class GaragePage extends Page {
     });
 
     this.carsControl.addHandlerStartRace(async () => {
-      console.log('start race');
       const cars = this.carsList.collectCarsRace();
 
       try {
@@ -170,7 +169,6 @@ export default class GaragePage extends Page {
     });
 
     this.carsControl.addHandlerResetRace(async () => {
-      console.log('stop race');
       this.carsControl.displayLoading(true);
       const cars = this.carsList.collectCarsRace();
 
