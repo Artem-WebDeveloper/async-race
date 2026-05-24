@@ -2,7 +2,7 @@
 
 ### SPA для управления коллекцией машин и проведения drag-race соревнований
 
-<img width="1385" height="685" alt="race12" src="https://github.com/user-attachments/assets/282df65e-7f85-49e9-a8d9-39280c21ca7c" />
+<img width="1385" height="685" alt="race12" src="https://github.com/user-attachments/assets/4247a2ac-5efa-49fa-a307-ce6457d28a4c" />
 
 
 ## Contents
