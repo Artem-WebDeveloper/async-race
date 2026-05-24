@@ -1,7 +1,12 @@
 {
   "name": "async-race",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "homepage": "https://artem-webdeveloper.github.io/async-race/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Artem-WebDeveloper/async-race"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
